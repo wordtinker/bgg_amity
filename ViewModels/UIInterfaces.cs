@@ -11,8 +11,6 @@ namespace Amity.ViewModels
     public interface IUIMainWindowService : IUIBaseService
     {
         string UserName { get; set; }
-        // TODO Later
-        //string AppDir { get; }
         bool? ShowUsernameEditor(MainViewModel vm);
         void Shutdown();
     }

@@ -18,12 +18,39 @@
             </Menu>
             <DockPanel DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,5,0,0">
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                    <Button x:Name="getGamesBtn" Content=">" Width="75" Margin="5,0" Command="{Binding GetGames}"/>
+                    <Button x:Name="getGamesBtn" Content="Get Games" Width="75" Margin="5,0" Command="{Binding GetGames}"/>
                 </StackPanel>
             </DockPanel>
             <StatusBar DockPanel.Dock="Bottom">
                 
             </StatusBar>
+            <Grid DockPanel.Dock="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <GroupBox Grid.Column="0" Grid.Row="0" Margin="5">
+                    <GroupBox.Header>
+                        <Label>Games</Label>
+                    </GroupBox.Header>
+                    <DataGrid x:Name="gamesGrid"
+                              ItemsSource="{Binding Games}"
+                              AutoGenerateColumns="False"
+                              SelectionMode="Single"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              IsReadOnly="True"
+                              BorderThickness="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Width="Auto" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Rating" Width="*" Binding="{Binding Rating}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+            </Grid>
         </DockPanel>
     </Border>
 </Window>

@@ -25,8 +25,6 @@ namespace Amity
                 return;
             }
             appDir = IOTools.CombinePath(appDir, appName);
-            // Save application directory path for later
-            Current.Properties["appDir"] = appDir;
 
             // Create directory if not exist
             if (!IOTools.CreateDirectory(appDir))
