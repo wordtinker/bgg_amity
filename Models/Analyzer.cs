@@ -18,8 +18,8 @@ namespace Amity.Models
         {
             // TODO !!!
             progress.Report(Tuple.Create(10.0, "Started"));
-            await Task.Delay(10000);
-            return new List<User>();
+            await Task.Delay(1000);
+            return new List<User>() { new User { Name="Test", Similarity=0.958215478, Variation = 1} };
         }
     }
 }

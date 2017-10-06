@@ -23,7 +23,22 @@
                 </StackPanel>
             </DockPanel>
             <StatusBar DockPanel.Dock="Bottom">
-                
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="250" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+                <StatusBarItem Grid.Column="0" Margin="2">
+                    <ProgressBar Value="{Binding ProgressValue}" Width="240" Height="16"/>
+                </StatusBarItem>
+                <StatusBarItem Grid.Column="1">
+                    <TextBlock Text="{Binding Log}"/>
+                </StatusBarItem>
             </StatusBar>
             <Grid DockPanel.Dock="Bottom">
                 <Grid.ColumnDefinitions>
@@ -48,6 +63,24 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" Width="Auto" Binding="{Binding Name}"/>
                             <DataGridTextColumn Header="Rating" Width="*" Binding="{Binding Rating}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+                <GroupBox Grid.Column="1" Grid.Row="0" Margin="5">
+                    <GroupBox.Header>
+                        <Label>Users</Label>
+                    </GroupBox.Header>
+                    <DataGrid x:Name="usersGrid"
+                              ItemsSource="{Binding Users}"
+                              AutoGenerateColumns="False"
+                              SelectionMode="Single"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              IsReadOnly="True"
+                              BorderThickness="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Width="Auto" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Similarity" Width="*" Binding="{Binding Similarity, StringFormat=F}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </GroupBox>
