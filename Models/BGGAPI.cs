@@ -71,7 +71,7 @@ namespace Amity.Models
             }
         }
 
-        public static async Task<IEnumerable<Game>> GetGamesForUser(string username, int minRating, int maxRating)
+        public static async Task<List<Game>> GetGamesForUser(string username, int minRating, int maxRating)
         {
             string baseURI = "https://www.boardgamegeek.com/xmlapi2/collection?username={0}&subtype=boardgame&excludesubtype=boardgameexpansion&rated=1&stats=1&brief=1&minrating={1}&rating={2}";
             string URI = string.Format(baseURI, username, minRating, maxRating);

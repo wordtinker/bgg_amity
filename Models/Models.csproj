@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analyzer.cs" />
     <Compile Include="BGGAPI.cs" />
     <Compile Include="RatingRegister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

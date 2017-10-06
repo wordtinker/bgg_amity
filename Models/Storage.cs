@@ -45,9 +45,10 @@ namespace Amity.Models
 
         private static void InitializeTables()
         {
-            string sql = "CREATE TABLE IF NOT EXISTS Games(id TEXT PRIMARY KEY, name TEXT, rating REAL)";
+            string sql = "CREATE TABLE IF NOT EXISTS Games(id TEXT, name TEXT, rating REAL)";
             ExecuteNonQuery(sql);
         }
+
         private static void ExecuteNonQuery(string sql)
         {
             SQLiteConnection dbConn = new SQLiteConnection(connString);
@@ -63,29 +64,36 @@ namespace Amity.Models
             string sql = "DELETE FROM Games";
             ExecuteNonQuery(sql);
         }
-        public static void AddGame(Game game)
+        public static void AddGames(IEnumerable<Game> games)
         {
             string sql = "INSERT INTO Games VALUES(@id, @name, @rating)";
             SQLiteConnection dbConn = new SQLiteConnection(connString);
             dbConn.Open();
-            using (SQLiteCommand cmd = new SQLiteCommand(sql, dbConn))
+            using (SQLiteTransaction transaction = dbConn.BeginTransaction())
             {
-                SQLiteParameter param = new SQLiteParameter("@id");
-                param.Value = game.ID;
-                param.DbType = System.Data.DbType.String;
-                cmd.Parameters.Add(param);
+                foreach(Game game in games)
+                {
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, dbConn))
+                    {
+                        SQLiteParameter param = new SQLiteParameter("@id");
+                        param.Value = game.ID;
+                        param.DbType = System.Data.DbType.String;
+                        cmd.Parameters.Add(param);
 
-                param = new SQLiteParameter("@name");
-                param.Value = game.Name;
-                param.DbType = System.Data.DbType.String;
-                cmd.Parameters.Add(param);
+                        param = new SQLiteParameter("@name");
+                        param.Value = game.Name;
+                        param.DbType = System.Data.DbType.String;
+                        cmd.Parameters.Add(param);
 
-                param = new SQLiteParameter("@rating");
-                param.Value = game.Rating;
-                param.DbType = System.Data.DbType.Double;
-                cmd.Parameters.Add(param);
+                        param = new SQLiteParameter("@rating");
+                        param.Value = game.Rating;
+                        param.DbType = System.Data.DbType.Double;
+                        cmd.Parameters.Add(param);
 
-                cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                transaction.Commit();
             }
             dbConn.Close();
         }
@@ -109,5 +117,8 @@ namespace Amity.Models
             }
             return games;
         }
+        public static void DeleteAllUsers() { /* TODO */ }
+        public static List<User> GetUsers() { /* TODO */  return new List<User>(); }
+        public static void AddUsers(IEnumerable<User> users) { /* TODO */}
     }
 }
