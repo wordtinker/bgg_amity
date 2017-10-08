@@ -80,7 +80,7 @@
                               BorderThickness="0">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" Width="Auto" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Similarity" Width="*" Binding="{Binding Similarity, StringFormat=F}"/>
+                            <DataGridTextColumn Header="Variation" Width="*" Binding="{Binding Variation}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </GroupBox>

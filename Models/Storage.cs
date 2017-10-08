@@ -45,7 +45,7 @@ namespace Amity.Models
 
         private static void InitializeTables()
         {
-            string sql = "CREATE TABLE IF NOT EXISTS Games(id TEXT, name TEXT, rating REAL)";
+            string sql = "CREATE TABLE IF NOT EXISTS Games(id TEXT, name TEXT, rating INTEGER)";
             ExecuteNonQuery(sql);
         }
 
@@ -87,7 +87,7 @@ namespace Amity.Models
 
                         param = new SQLiteParameter("@rating");
                         param.Value = game.Rating;
-                        param.DbType = System.Data.DbType.Double;
+                        param.DbType = System.Data.DbType.Byte;
                         cmd.Parameters.Add(param);
 
                         cmd.ExecuteNonQuery();
@@ -111,7 +111,7 @@ namespace Amity.Models
                 SQLiteDataReader dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
-                    games.Add(new Game { ID = dr.GetString(0), Name = dr.GetString(1), Rating = dr.GetDouble(2) });
+                    games.Add(new Game { ID = dr.GetString(0), Name = dr.GetString(1), Rating = dr.GetByte(2) });
                 }
                 dr.Close();
             }

@@ -138,7 +138,7 @@ namespace Amity.ViewModels
                     {
                         //Update the visual progress of the analysis.
                         ProgressValue = Convert.ToInt32(p.Item1);
-                        if (p.Item2 != null)
+                        if (!string.IsNullOrEmpty(p.Item2))
                         {
                             Log = string.Format("{0} is ready!", p.Item2);
                         }

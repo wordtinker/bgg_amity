@@ -10,20 +10,23 @@ using System.Xml.Linq;
 
 namespace Amity.Models
 {
-    public class Game
+    public struct Game
     {
         public string Name { get; internal set; }
         public string ID { get; internal set; }
-        public double Rating { get; internal set; }
+        public byte Rating { get; internal set; }
+    }
 
-        internal static double RatingFromString(string rate)
+    internal static class Converter
+    {
+        internal static byte RatingFromString(string rate)
         {
             // use "en-US" for proper "." conversion
-            return Convert.ToDouble(rate, new CultureInfo("en-US"));
+            return Convert.ToByte(Convert.ToDouble(rate, new CultureInfo("en-US")));
         }
     }
 
-    public static class FilterExtensions
+    internal static class FilterExtensions
     {
         public static List<Game> FilterGames(this XDocument doc)
         {
@@ -32,16 +35,31 @@ namespace Amity.Models
                         {
                             Name = node.Value,
                             ID = node.Attribute("objectid").Value,
-                            Rating = Game.RatingFromString(node.Descendants("rating").Single().Attribute("value").Value)
+                            Rating = Converter.RatingFromString(node.Descendants("rating").Single().Attribute("value").Value)
                         };
             return games.ToList();
+        }
+        public static List<User> FilterNames(this XDocument doc)
+        {
+            var users = from node in doc.Root.Descendants("comment")
+                        select new User
+                        {
+                            Name = node.Attribute("username").Value,
+                            Rating = Converter.RatingFromString(node.Attribute("rating").Value)
+                        };
+            return users.ToList();
         }
     }
 
     public static class BGGAPI
     {
+        private const int DEFAULT_DELAY = 1000;
         private static async Task<XDocument> GetXMLFrom(string uri)
         {
+            // use separate instance every time instead one static instance
+            // better spam prevention
+            // TODO test, inconsistent results
+            // TODO cache since API provides no-cache headers
             using (HttpClient client = new HttpClient())
             {
                 do
@@ -49,7 +67,7 @@ namespace Amity.Models
                     using (HttpResponseMessage response = await client.GetAsync(uri))
                     {
                         // wait before asking for result again
-                        await Task.Delay(500);
+                        await Task.Delay(DEFAULT_DELAY);
                         // throw on errors
                         response.EnsureSuccessStatusCode();
 
@@ -84,6 +102,22 @@ namespace Amity.Models
             catch (Exception ex)
             {
                 return new List<Game>();
+            }
+        }
+
+        public static async Task<List<User>> GetUsersOfTheGame(string gameId, int pageNumber)
+        {
+            string baseURI = "https://www.boardgamegeek.com/xmlapi2/thing?type=boardgame&id={0}&ratingcomments=1&page={1}&pagesize=100";
+            string URI = string.Format(baseURI, gameId, pageNumber);
+
+            try
+            {
+                XDocument doc = await GetXMLFrom(URI);
+                return doc.FilterNames();
+            }
+            catch (Exception ex)
+            {
+                return new List<User>();
             }
         }
     }
