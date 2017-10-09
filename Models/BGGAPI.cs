@@ -26,40 +26,59 @@ namespace Amity.Models
         }
     }
 
-    internal static class FilterExtensions
+    public static class FilterExtensions
     {
         public static List<Game> FilterGames(this XDocument doc)
         {
-            var games = from node in doc.Root.Elements("item")
-                        select new Game
-                        {
-                            Name = node.Value,
-                            ID = node.Attribute("objectid").Value,
-                            Rating = Converter.RatingFromString(node.Descendants("rating").Single().Attribute("value").Value)
-                        };
-            return games.ToList();
+            try
+            {
+                var games = from node in doc.Root.Elements("item")
+                            select new Game
+                            {
+                                Name = node.Value,
+                                ID = node.Attribute("objectid").Value,
+                                Rating = Converter.RatingFromString(node.Descendants("rating").Single().Attribute("value").Value)
+                            };
+                return games.ToList();
+            }
+            catch (Exception)
+            {
+                return new List<Game>();
+            }
+            
         }
         public static List<User> FilterNames(this XDocument doc)
         {
-            var users = from node in doc.Root.Descendants("comment")
-                        select new User
-                        {
-                            Name = node.Attribute("username").Value,
-                            Rating = Converter.RatingFromString(node.Attribute("rating").Value)
-                        };
-            return users.ToList();
+            try
+            {
+                var users = from node in doc.Root.Descendants("comment")
+                            select new User
+                            {
+                                Name = node.Attribute("username").Value,
+                                Rating = Converter.RatingFromString(node.Attribute("rating").Value)
+                            };
+                return users.ToList();
+            }
+            catch (Exception)
+            {
+                return new List<User>();
+            }
         }
     }
 
-    public static class BGGAPI
+    public interface IBGGAPI
+    {
+        Task<XDocument> GetGamesForUser(string username, int minRating, int maxRating);
+        Task<XDocument> GetUsersOfTheGame(string gameId, int pageNumber);
+    }
+
+    public class BGGAPI : IBGGAPI
     {
         private const int DEFAULT_DELAY = 1000;
-        private static async Task<XDocument> GetXMLFrom(string uri)
+        private async Task<XDocument> GetXMLFrom(string uri)
         {
             // use separate instance every time instead one static instance
             // better spam prevention
-            // TODO test, inconsistent results
-            // TODO cache since API provides no-cache headers
             using (HttpClient client = new HttpClient())
             {
                 do
@@ -89,36 +108,18 @@ namespace Amity.Models
             }
         }
 
-        public static async Task<List<Game>> GetGamesForUser(string username, int minRating, int maxRating)
+        public async Task<XDocument> GetGamesForUser(string username, int minRating, int maxRating)
         {
             string baseURI = "https://www.boardgamegeek.com/xmlapi2/collection?username={0}&subtype=boardgame&excludesubtype=boardgameexpansion&rated=1&stats=1&brief=1&minrating={1}&rating={2}";
             string URI = string.Format(baseURI, username, minRating, maxRating);
-
-            try
-            {
-                XDocument doc = await GetXMLFrom(URI);
-                return doc.FilterGames();
-            }
-            catch (Exception ex)
-            {
-                return new List<Game>();
-            }
+            return await GetXMLFrom(URI);
         }
 
-        public static async Task<List<User>> GetUsersOfTheGame(string gameId, int pageNumber)
+        public async Task<XDocument> GetUsersOfTheGame(string gameId, int pageNumber)
         {
             string baseURI = "https://www.boardgamegeek.com/xmlapi2/thing?type=boardgame&id={0}&ratingcomments=1&page={1}&pagesize=100";
             string URI = string.Format(baseURI, gameId, pageNumber);
-
-            try
-            {
-                XDocument doc = await GetXMLFrom(URI);
-                return doc.FilterNames();
-            }
-            catch (Exception ex)
-            {
-                return new List<User>();
-            }
+            return await GetXMLFrom(URI);
         }
     }
 }

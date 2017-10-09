@@ -5,6 +5,7 @@ using Amity.Models;
 using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace Amity.ViewModels
 {
@@ -110,8 +111,10 @@ namespace Amity.ViewModels
             Storage.DeleteAllGames();
             Games.Clear();
             // Ask BGG API for list of games for specific user
-            List<Game> gameList = await Task.Run(
-                () => BGGAPI.GetGamesForUser(UserName, RatingRegister.Instance.Min, RatingRegister.Instance.Max));
+            IBGGAPI caller = new Cache(new BGGAPI());
+            XDocument doc = await Task.Run(
+                () => caller.GetGamesForUser(UserName, RatingRegister.Instance.Min, RatingRegister.Instance.Max));
+            List<Game> gameList = doc.FilterGames();
             // Update view and DB
             Storage.AddGames(gameList);
             gameList.ForEach(Games.Add);

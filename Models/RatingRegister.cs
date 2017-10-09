@@ -19,11 +19,11 @@ namespace Amity.Models
             
             matrix = new byte[10, 2];
             // TODO STUB
-            matrix[9, 0] = 9; matrix[9, 1] = 10;
+            matrix[9, 0] = 8; matrix[9, 1] = 10;
             matrix[8, 0] = 8; matrix[8, 1] = 10;
             matrix[7, 0] = 8; matrix[7, 1] = 10;
             //matrix[6, 0] = 6; matrix[6, 1] = 9;
-            Variation = 1;
+            Variation = 3;
             // TODO setter (i, min, max), check bounds
         }
 

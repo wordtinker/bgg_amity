@@ -9,6 +9,7 @@ namespace Amity.ViewModels
             // TODO STUB restore Rating Register
             // Ensure we have db file to store data.
             Storage.Configure(appDir);
+            Cache.Path = appDir;
             return Storage.CreateFile(appDir);
         }
     }

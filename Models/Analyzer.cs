@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Amity.Models
 {
@@ -94,9 +95,11 @@ namespace Amity.Models
             byte maxRating = reg.Item2;
             List<User> userList = new List<User>();
             // Keep asking new pages until we reach no more users
+            IBGGAPI caller = new Cache(new BGGAPI());
             for (int page = 1;; page++)
             {
-                List<User> usersFromPage = await BGGAPI.GetUsersOfTheGame(game.ID, page);
+                XDocument doc = await caller.GetUsersOfTheGame(game.ID, page);
+                List<User> usersFromPage = doc.FilterNames();
                 var filtered = from u in usersFromPage
                                where u.Rating >= minRating &&
                                      u.Rating <= maxRating
