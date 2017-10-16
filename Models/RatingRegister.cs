@@ -16,15 +16,17 @@ namespace Amity.Models
         // singleton ctor
         private RatingRegister()
         {
+            // TODO Later Persistence
+            // TODO Later Manage Register via GUI
             
             matrix = new byte[10, 2];
-            // TODO STUB
-            matrix[9, 0] = 8; matrix[9, 1] = 10;
-            matrix[8, 0] = 8; matrix[8, 1] = 10;
-            matrix[7, 0] = 8; matrix[7, 1] = 10;
-            //matrix[6, 0] = 6; matrix[6, 1] = 9;
-            Variation = 3;
-            // TODO setter (i, min, max), check bounds
+            // TODO Later STUB
+            SetRatingSpan(10, 8, 10);
+            SetRatingSpan(9, 8, 10);
+            SetRatingSpan(8, 8, 10);
+            SetRatingSpan(4, 3, 5);
+            SetRatingSpan(2, 1, 3);
+            Variation = 4;
         }
 
         // Members
@@ -63,5 +65,15 @@ namespace Amity.Models
             }
         }
         public byte Variation { get; set; }
+        private void SetRatingSpan(byte rating, byte low, byte high)
+        {
+            if (rating < 1 || rating > 10) throw new ArgumentOutOfRangeException();
+            if (low < 1 || low > 10) throw new ArgumentOutOfRangeException();
+            if (high < 1 || high > 10) throw new ArgumentOutOfRangeException();
+            if (low > high) throw new ArgumentOutOfRangeException();
+
+            matrix[rating - 1, 0] = low;
+            matrix[rating - 1, 1] = high;
+        }
     }
 }

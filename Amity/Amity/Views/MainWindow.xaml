@@ -73,7 +73,7 @@
                     <DataGrid x:Name="usersGrid"
                               ItemsSource="{Binding Users}"
                               AutoGenerateColumns="False"
-                              SelectionMode="Single"
+                              SelectionMode="Extended"
                               HeadersVisibility="Column"
                               GridLinesVisibility="Horizontal"
                               IsReadOnly="True"
